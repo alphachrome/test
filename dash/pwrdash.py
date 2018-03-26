@@ -57,8 +57,8 @@ def gen_graph():
         go.Scatter(x=[], y=[], name='iwlwifi', yaxis='y4')               
     ]
     layout = go.Layout(
-        width=1200, 
-        height=768, 
+        autosize=True, 
+        height=768,
         plot_bgcolor="#C0C0C0",
         paper_bgcolor="#F0F0F0",
         margin=dict(l=50, b=40, r=0, t=30),
@@ -92,7 +92,7 @@ def gen_histo():
         )    
     ]
     layout = go.Layout(
-        width=1070, 
+        autosize=True, 
         height=240, 
         plot_bgcolor="#C0C0C0",
         paper_bgcolor="#F0F0F0",
@@ -115,8 +115,6 @@ def make_annotation_item(xref, x, y, text):
     return dict(xref=xref, yref='y1',
                 x=x, y=y,
                 font=dict(color='black'),
-                #xanchor='left',
-                #yanchor='middle',
                 text='{} ({:.2f}W)'.format(text,x,y),
                 showarrow=True)
 
@@ -141,16 +139,40 @@ def serve_layout():
                         children='STARTING...',
                         style={
                             'margin':'10px', 
+                            'float':'left',
                             'font-family': 'verdana', 
-                            'font-size':'120%'
+                            'font-size':'120%',
                         }
                     ),
-                    html.Span(
-                        id='text_status',
+                    html.P(
+                        id='text_bat0',
                         children='',
-                        style={'font-size':'120%', 'padding':'20px'}
+                        style={
+                            'font-size':'100%', 
+                            'float':'left',
+                            'border-style':'solid',
+                            'border-width':'1px',
+                            'margin':'10px',
+                            'padding':'5px'
+                        }
+                    ),
+                    html.P(
+                        id='text_bat1',
+                        children='',
+                        style={
+                            'font-size':'100%', 
+                            'float':'left',
+                            'border-style':'solid',
+                            'border-width':'1px',
+                            'margin':'10px',
+                            'padding':'5px'
+                        }
                     )
-                ]
+                ],
+                style={
+                    'position':'sticky',
+                    'z-index':'100'
+                }
 
             ),
 
@@ -163,38 +185,58 @@ def serve_layout():
                     dcc.Graph(
                         id='histo', 
                         figure=gen_histo()
+                    ),                
+                    dcc.Interval(id='live-update', interval=1000),
+                    html.Div(
+                        id='time0', 
+                        children=time.time(), 
+                        style={'display':'none'}
                     )
                 ],  
-                style={'display': 'inline-block'}
+                style={
+                    'position': 'relative',
+                    'top': '50px',
+                    'display': 'block',
+                    'z-index': '10'
+                },
             ),
 
-            dcc.Interval(id='live-update', interval=1000),
-
-            html.Div(id='time0', children=time.time(), style={'display':'none'})
-
-        ], style={'background-color':"#F0F0F0"}
+ 
+        ], style={
+            'background-color':'#F0F0F0',
+        }
     )
 
 app.layout = serve_layout
 
 @app.callback(
-    dep.Output('text_status', 'children'),
+    dep.Output('text_bat0', 'children'),
     [],
     [],
     [dep.Event('live-update', 'interval')]
 )
 def update_text():
-    return 'BAT0({}): {:.2f}V, {:.2f}A, {}% - BAT1({}): {:.2f}V, {:.2f}A, {}%'.format(
+    return 'BAT0: {}, {:.2f}V, {:.2f}A, {}%'.format(
         read('/sys/class/power_supply/BAT0/status'),
         read('/sys/class/power_supply/BAT0/voltage_now')/1e6,
         read('/sys/class/power_supply/BAT0/current_now')/1e6,
         read('/sys/class/power_supply/BAT0/capacity'),
+    )
+
+@app.callback(
+    dep.Output('text_bat1', 'children'),
+    [],
+    [],
+    [dep.Event('live-update', 'interval')]
+)
+def update_text():
+    return 'BAT1: {}, {:.2f}V, {:.2f}A, {}%'.format(
         read('/sys/class/power_supply/BAT1/status'),
         read('/sys/class/power_supply/BAT1/voltage_now')/1e6,
         read('/sys/class/power_supply/BAT1/current_now')/1e6,
-        read('/sys/class/power_supply/BAT1/capacity')
+        read('/sys/class/power_supply/BAT1/capacity'),
     )
-    
+
 @app.callback(
     dep.Output('graph', 'figure'),
     [],
