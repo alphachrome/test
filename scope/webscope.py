@@ -9,10 +9,26 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 from plotly import tools
-from mytools import sysvar
 from flask import request, redirect, url_for
 
 UPDATE_INTERVAL_MSEC=1500
+
+def uj2w(t,e):
+    w = [(e[1]-e[0])/(t[1]-t[0])/1e6]
+    for t0,t1,e0,e1 in zip(t[:-1],t[1:],e[:-1],e[1:]):
+        p = (e1-e0)/(t1-t0)/1e6
+        if p>100 or p<-100:
+            p=0
+        w.append(p)
+    return np.array(w)
+
+def sysvar(filename):
+    try:
+        with open(filename, 'r') as fd:
+            s = fd.readline().rstrip()
+            return int(s) if s.isdigit() else s
+    except:
+        return 0
 
 app = dash.Dash()
 time0=time.time()
@@ -174,4 +190,4 @@ def update_button_text(n_clicks):
         return 'RUN'
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=9001)
+    app.run_server(debug=True, port=9002)
