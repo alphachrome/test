@@ -87,16 +87,54 @@ def run_testscript1():
     while True:
         n=n+1
         serv.delay=int(random()*20)
-        slp = random()*1
-        print "Test #{}: sleep={:.0f}ms".format(n, slp*1000)
+        slp = random()*5
+        print "Test #{}:".format(n)
         serv.up()
-        sleep(random()*5)
+        print "   Sleep for {:.0f}ms".format(slp*1000)        
+        sleep(slp)
         serv.dn()
-        sleep(0.25)
         while True:
             lsusb = subprocess.check_output('lsusb', shell=True)
             if lsusb.find("18d1:502d"):
-                break
+                print "   Found base keyboard!"
+                break 
+        slp = random()*10
+        print "   Sleep for {:.0f}ms".format(slp*1000)
+        sleep(slp)
+        
+        n=n+1
+        serv.delay=int(random()*20)
+        slp = random()*5
+        print "Test #{}:".format(n)
+        serv.a_up()
+        print "   Sleep for {:.0f}ms".format(slp*1000)
+        sleep(slp)
+        serv.a_dn()
+        while True:
+            lsusb = subprocess.check_output('lsusb', shell=True)
+            if lsusb.find("18d1:502d"):
+                print "   Found base keyboard!"
+                break 
+        slp = random()*10
+        print "   Sleep for {:.0f}ms".format(slp*1000)
+        sleep(slp)
+        
+        n=n+1
+        serv.delay=int(random()*20)
+        slp = random()*5
+        print "Test #{}:".format(n)
+        serv.b_up()
+        print "   Sleep for {:.0f}ms".format(slp*1000)        
+        sleep(slp)
+        serv.b_dn()
+        while True:
+            lsusb = subprocess.check_output('lsusb', shell=True)
+            if lsusb.find("18d1:502d"):
+                print "   Found base keyboard!"
+                break  
+        slp = random()*10
+        print "   Sleep for {:.0f}ms".format(slp*1000)
+        sleep(slp) 
             
 serv = Servo(110,96,75,88,delay=5)
 serv.a_dn()
