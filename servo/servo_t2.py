@@ -22,6 +22,14 @@ class Getch:
     
 getch = Getch()
 
+def sysvar(filename):
+    try:
+        with open(filename, 'r') as fd:
+            s = fd.readline().rstrip()
+            return int(s) if s.isdigit() else s
+    except:
+        return 0
+
 dev_path="/dev/serial/by-id/"
 try:
     ser_dev_list = [dev_path+f for f in os.listdir(dev_path)]
@@ -81,8 +89,22 @@ class Servo:
         self.pos_a = self.A_UP
         self.pos_b = self.B_UP
         self.update()
+
+def test_kbd():
+    """return only after keyboard found"""
+    while True:
+        lsusb = subprocess.check_output('lsusb', shell=True)
+        if lsusb.find("18d1:502d"):
+            print "   Found base keyboard!"
+            break 
+
+def test_bat1():
+    """return only after BAT1 found"""
+    while not os.path.exists("/sys/class/power_supply/BAT1"):
+        sleep(0.1)
+    print "   Found BAT1!"
         
-def run_testscript1():
+def run_testscript2():
     n=0
     while True:
         n=n+1
@@ -93,11 +115,8 @@ def run_testscript1():
         print "   Sleep for {:.0f}ms".format(slp*1000)        
         sleep(slp)
         serv.dn()
-        while True:
-            lsusb = subprocess.check_output('lsusb', shell=True)
-            if lsusb.find("18d1:502d"):
-                print "   Found base keyboard!"
-                break 
+        test_kbd()
+        test_bat1()
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp)
@@ -110,11 +129,8 @@ def run_testscript1():
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp)
         serv.a_dn()
-        while True:
-            lsusb = subprocess.check_output('lsusb', shell=True)
-            if lsusb.find("18d1:502d"):
-                print "   Found base keyboard!"
-                break 
+        test_kbd()
+        test_bat1()
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp)
@@ -127,11 +143,8 @@ def run_testscript1():
         print "   Sleep for {:.0f}ms".format(slp*1000)        
         sleep(slp)
         serv.b_dn()
-        while True:
-            lsusb = subprocess.check_output('lsusb', shell=True)
-            if lsusb.find("18d1:502d"):
-                print "   Found base keyboard!"
-                break  
+        test_kbd()
+        test_bat1()
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp) 
@@ -160,8 +173,8 @@ while True:
         ser.write("{},{},{}\r".format(serv.delay,cmd[2:],serv.pos_b))
     elif cmd[0:2]=='bb':
         ser.write("{},{},{}\r".format(serv.delay,serv.pos_a,cmd[2:]))
-    elif cmd=='t1':
-                run_testscript1()        
+    elif cmd=='t2':
+                run_testscript2()        
     elif cmd=='s':
         while True:
             c = getch()
