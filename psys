@@ -1,0 +1,19 @@
+#! /usr/local/conda2/bin/python
+import time
+
+def read(filename, t='int'):
+    with open(filename, 'r') as fd:
+        val = fd.readline().rstrip()
+    return int(val) if val.isdigit() else val
+
+try:
+    e0 = read('/sys/class/powercap/intel-rapl:1/energy_uj')
+    t0 = time.time()
+    time.sleep(1)
+    e1 = read('/sys/class/powercap/intel-rapl:1/energy_uj')
+    t1 = time.time()
+
+    print "PSYS = {:.3f}W".format((e1-e0)/(t1-t0)/1e6)
+except:
+    print "???"
+
