@@ -102,6 +102,7 @@ def test_bat1():
     """return only after BAT1 found"""
     while not os.path.exists("/sys/class/power_supply/BAT1"):
         sleep(0.1)
+    print "   Found BAT1!"
         
 def run_testscript2():
     n=0
