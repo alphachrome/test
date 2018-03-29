@@ -9,29 +9,23 @@ def sysvar(filename, t='int'):
     except:
         return '---'
 
-def powercap_info(filename):
-    print '{}/'.format(filename)
-    print '  name: {}'.format(
-        sysvar(filename+'/name'))
-    print '    constraint_0:'
+def contraint_info(f, n):
+    print '    constraint_{}:'.format(n)
     print '      name: {}'.format(
-        sysvar(filename+'/constraint_0_name'))
+        sysvar('{}/constraint_{}__name'.format(f,n)))
     print '      max_power_uw: {}'.format(
-        sysvar(filename+'/constraint_0_max_power_uw'))
+        sysvar('{}/constraint_{}_max_power_uw'.format(f,n)))
     print '      power_limit_uw: {}'.format(
-        sysvar(filename+'/constraint_0_power_limit_uw'))
+        sysvar('{}/constraint_{}_power_limit_uw'.format(f,n)))
     print '      time_window_us: {}'.format(
-        sysvar(filename+'/constraint_1_time_window_us'))
-    print '    constraint_1:'
-    print '      name: {}'.format(
-        sysvar(filename+'/constraint_1_name'))
-    print '      max_power_uw: {}'.format(
-        sysvar(filename+'/constraint_1_max_power_uw'))
-    print '      power_limit_uw: {}'.format(
-        sysvar(filename+'/constraint_1_power_limit_uw'))
-    print '      time_window_us: {}'.format(
-        sysvar(filename+'/constraint_1_time_window_us'))
-
+        sysvar('{}/constraint_{}_time_window_us'.format(f,n)))
+    
+def powercap_info(f):
+    print '{}/'.format(f)
+    print '  name: {}'.format(sysvar(f+'/name'))
+    contraint_info(f,0)
+    contraint_info(f,1)
+        
 powercap_info('/sys/class/powercap/intel-rapl:0')
 #powercap_info('/sys/class/powercap/intel-rapl:0:0')
 #powercap_info('/sys/class/powercap/intel-rapl:0:1')
