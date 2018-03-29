@@ -103,7 +103,18 @@ def test_bat1():
     while not os.path.exists("/sys/class/power_supply/BAT1"):
         sleep(0.1)
     print "   Found BAT1!"
-        
+
+def batinfo():
+    print "   BAT0:"
+    print "      voltage_now={:.3f}V".format(sysvar('/sys/class/power_supply/BAT0/voltage_now')/1e6)
+    print "      current_now={:.3f}A".format(sysvar('/sys/class/power_supply/BAT0/current_now')/1e6)
+    print "      capacity={}%".format(sysvar('/sys/class/power_supply/BAT0/capacity'))    
+    print "   BAT1:"
+    print "      voltage_now={:.3f}V".format(sysvar('/sys/class/power_supply/BAT1/voltage_now')/1e6)
+    print "      current_now={:.3f}A".format(sysvar('/sys/class/power_supply/BAT1/current_now')/1e6)
+    print "      capacity={}%".format(sysvar('/sys/class/power_supply/BAT1/capacity'))
+
+    
 def run_testscript2():
     n=0
     while True:
@@ -120,6 +131,7 @@ def run_testscript2():
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp)
+        batinfo()
         
         n=n+1
         serv.delay=int(random()*20)
@@ -134,6 +146,7 @@ def run_testscript2():
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp)
+        batinfo()
         
         n=n+1
         serv.delay=int(random()*20)
@@ -148,6 +161,7 @@ def run_testscript2():
         slp = random()*10
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp) 
+        batinfo()
             
 serv = Servo(110,96,75,88,delay=5)
 serv.a_dn()
