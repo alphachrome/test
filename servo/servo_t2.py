@@ -106,64 +106,94 @@ def test_bat1():
 
 def batinfo():
     print "   BAT0:"
+    print "      status="+sysvar('/sys/class/power_supply/BAT0/status')
     print "      voltage_now={:.3f}V".format(sysvar('/sys/class/power_supply/BAT0/voltage_now')/1e6)
     print "      current_now={:.3f}A".format(sysvar('/sys/class/power_supply/BAT0/current_now')/1e6)
     print "      capacity={}%".format(sysvar('/sys/class/power_supply/BAT0/capacity'))    
     print "   BAT1:"
+    print "      status="+sysvar('/sys/class/power_supply/BAT1/status')
     print "      voltage_now={:.3f}V".format(sysvar('/sys/class/power_supply/BAT1/voltage_now')/1e6)
     print "      current_now={:.3f}A".format(sysvar('/sys/class/power_supply/BAT1/current_now')/1e6)
     print "      capacity={}%".format(sysvar('/sys/class/power_supply/BAT1/capacity'))
 
-    
+ 
+SERV_DELAY_MAX=20
+UP_SLEEP_MAX=2.5
+DN_SLEEP_MAX=10
 def run_testscript2():
     n=0
     while True:
+        if True:
+            n=n+1
+            serv.delay=int(random()*SERV_DELAY_MAX)
+            slp = random()*UP_SLEEP_MAX
+            print "Test #{}: servo.delay={}".format(n,serv.delay)
+            serv.up()
+            print "   Sleep for {:.0f}ms".format(slp*1000)        
+            sleep(slp)
+            serv.dn()
+            test_kbd()
+            test_bat1()
+            slp = random()*DN_SLEEP_MAX
+            print "   Sleep for {:.0f}ms".format(slp*1000)
+            sleep(slp)
+            batinfo()
+        if True:
+            n=n+1
+            serv.delay=int(random()*SERV_DELAY_MAX)
+            slp = random()*UP_SLEEP_MAX
+
+            print "Test #{}: servo.delay={}".format(n,serv.delay)
+            serv.a_up()
+            print "   Sleep for {:.0f}ms".format(slp*1000)
+            sleep(slp)
+            serv.a_dn()
+            test_kbd()
+            test_bat1()
+            slp = random()*DN_SLEEP_MAX
+            print "   Sleep for {:.0f}ms".format(slp*1000)
+            sleep(slp)
+            batinfo()
+            
+        if True:
+            n=n+1
+            serv.delay=int(random()*SERV_DELAY_MAX)
+            slp = random()*UP_SLEEP_MAX
+            print "Test #{}: servo.delay={}".format(n,serv.delay)
+
+            serv.b_up()
+            print "   Sleep for {:.0f}ms".format(slp*1000)        
+            sleep(slp)
+            serv.b_dn()
+            test_kbd()
+            test_bat1()
+            slp = random()*DN_SLEEP_MAX
+            print "   Sleep for {:.0f}ms".format(slp*1000)
+            sleep(slp) 
+            batinfo()
+            
+def run_testscript3():
+    n=0
+    while True:
         n=n+1
-        serv.delay=int(random()*20)
-        slp = random()*5
-        print "Test #{}:".format(n)
-        serv.up()
-        print "   Sleep for {:.0f}ms".format(slp*1000)        
-        sleep(slp)
-        serv.dn()
-        test_kbd()
-        test_bat1()
-        slp = random()*10
-        print "   Sleep for {:.0f}ms".format(slp*1000)
-        sleep(slp)
-        batinfo()
+        #serv.delay=int(random()*SERV_DELAY_MAX)
+        serv.delay=17
+        slp = 2 + random()
         
-        n=n+1
-        serv.delay=int(random()*20)
-        slp = random()*5
-        print "Test #{}:".format(n)
-        serv.a_up()
-        print "   Sleep for {:.0f}ms".format(slp*1000)
-        sleep(slp)
-        serv.a_dn()
-        test_kbd()
-        test_bat1()
-        slp = random()*10
-        print "   Sleep for {:.0f}ms".format(slp*1000)
-        sleep(slp)
-        batinfo()
-        
-        n=n+1
-        serv.delay=int(random()*20)
-        slp = random()*5
-        print "Test #{}:".format(n)
+        print "Test #{}: servo.delay={}".format(n,serv.delay)
+
         serv.b_up()
         print "   Sleep for {:.0f}ms".format(slp*1000)        
         sleep(slp)
         serv.b_dn()
         test_kbd()
         test_bat1()
-        slp = random()*10
+        slp = random()*DN_SLEEP_MAX
         print "   Sleep for {:.0f}ms".format(slp*1000)
         sleep(slp) 
         batinfo()
-            
-serv = Servo(110,96,75,88,delay=5)
+
+serv = Servo(110,96,70,88,delay=5)
 serv.a_dn()
 serv.b_dn()
 
@@ -188,7 +218,9 @@ while True:
     elif cmd[0:2]=='bb':
         ser.write("{},{},{}\r".format(serv.delay,serv.pos_a,cmd[2:]))
     elif cmd=='t2':
-                run_testscript2()        
+        run_testscript2()     
+    elif cmd=='t3':
+        run_testscript3()
     elif cmd=='s':
         while True:
             c = getch()
