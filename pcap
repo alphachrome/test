@@ -12,7 +12,7 @@ def sysvar(filename, t='int'):
 def contraint_info(f, n):
     print '    constraint_{}:'.format(n)
     print '      name: {}'.format(
-        sysvar('{}/constraint_{}__name'.format(f,n)))
+        sysvar('{}/constraint_{}_name'.format(f,n)))
     print '      max_power_uw: {}'.format(
         sysvar('{}/constraint_{}_max_power_uw'.format(f,n)))
     print '      power_limit_uw: {}'.format(
