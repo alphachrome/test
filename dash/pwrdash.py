@@ -45,9 +45,15 @@ def gen_graph():
                    marker=dict(color='orange'), legendgroup='bat0', showlegend=False),
         go.Scatter(x=[], y=[], name='BAT1', yaxis='y3',
                    marker=dict(color='steelblue'), legendgroup='bat1', showlegend=False),
+        
         go.Scatter(x=[], y=[], name='PSYS', legendgroup='psys', yaxis='y3',
                    marker=dict(color='red')),
-        go.Scatter(x=[], y=[], name='CPU', legendgroup='plt', yaxis='y3'),
+
+        go.Scatter(x=[], y=[], name='PACKAGE', yaxis='y3'),
+        go.Scatter(x=[], y=[], name='CORE', yaxis='y3'),
+        go.Scatter(x=[], y=[], name='UNCORE', yaxis='y3'),
+        go.Scatter(x=[], y=[], name='DRAM', yaxis='y3'),
+
         go.Scatter(x=[], y=[], name='x86_pkg', yaxis='y4'),
         go.Scatter(x=[], y=[], name='INT3400', yaxis='y4'),
         go.Scatter(x=[], y=[], name='TSR0', yaxis='y4'),
@@ -247,9 +253,22 @@ def update_text():
 
 def update_plot(fig,time0):
     y_data = []
+    
     t0 = time.time()
     sys0 = read('/sys/class/powercap/intel-rapl:1/energy_uj')/1e6
-    cpu0 = read('/sys/class/powercap/intel-rapl:0/energy_uj')/1e6
+
+    t0_0 = time.time()
+    pkg0 = read('/sys/class/powercap/intel-rapl:0/energy_uj')/1e6
+
+    t0_1 = time.time()
+    core0 = read('/sys/class/powercap/intel-rapl:0:0/energy_uj')/1e6
+
+    t0_2 = time.time()
+    uncore0 = read('/sys/class/powercap/intel-rapl:0:1/energy_uj')/1e6
+    
+    t0_3 = time.time()    
+    dram0 = read('/sys/class/powercap/intel-rapl:0:2/energy_uj')/1e6
+    
     
     v0 = read('/sys/class/power_supply/BAT0/voltage_now')/1e6
     v1 = read('/sys/class/power_supply/BAT1/voltage_now')/1e6
@@ -269,7 +288,10 @@ def update_plot(fig,time0):
     y_data.append(i0)
     y_data.append(i1)
     y_data.append(v0*i0)
-    y_data.append(v1*i1)    
+    y_data.append(v1*i1)   
+    y_data.append(0)
+    y_data.append(0)
+    y_data.append(0)
     y_data.append(0)
     y_data.append(0)
     y_data.append(read('/sys/class/thermal/thermal_zone0/temp')/1e3)
@@ -282,11 +304,26 @@ def update_plot(fig,time0):
     y_data.append(read('/sys/class/thermal/thermal_zone7/temp')/1e3)
 
     time.sleep(0.1)
-    dt = time.time() - t0
+    
     sys1 = read('/sys/class/powercap/intel-rapl:1/energy_uj')/1e6
-    cpu1 = read('/sys/class/powercap/intel-rapl:0/energy_uj')/1e6
+    dt = time.time() - t0
     y_data[6] = (sys1-sys0)/dt
-    y_data[7] = (cpu1-cpu0)/dt
+
+    pkg1 = read('/sys/class/powercap/intel-rapl:0/energy_uj')/1e6
+    dt = time.time() - t0_0
+    y_data[7] = (pkg1-pkg0)/dt
+    
+    core1 = read('/sys/class/powercap/intel-rapl:0:0/energy_uj')/1e6
+    dt = time.time() - t0_1
+    y_data[8] = (core1-core0)/dt
+    
+    uncore1 = read('/sys/class/powercap/intel-rapl:0:1/energy_uj')/1e6
+    dt = time.time() - t0_2
+    y_data[9] = (uncore1-uncore0)/dt
+
+    dram1 = read('/sys/class/powercap/intel-rapl:0:2/energy_uj')/1e6
+    dt = time.time() - t0_3
+    y_data[10] = (dram1-dram0)/dt
     
     data = fig['data']
         
