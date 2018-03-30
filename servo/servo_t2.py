@@ -4,6 +4,7 @@ from time import sleep, time
 import subprocess
 from random import random
 import serial
+import numpy as np
 
 class Getch:
     def __init__(self):
@@ -98,9 +99,12 @@ def test_kbd():
             print "   Found base keyboard!"
             break 
 
+def bat1_presence():
+    return os.path.exists("/sys/class/power_supply/BAT1")
+            
 def test_bat1():
     """return only after BAT1 found"""
-    while not os.path.exists("/sys/class/power_supply/BAT1"):
+    while not bat1_presence():
         sleep(0.1)
     print "   Found BAT1!"
 
@@ -173,27 +177,52 @@ def run_testscript2():
             batinfo()
             
 def run_testscript3():
-    n=0
+    serv.delay=17
     while True:
-        n=n+1
-        #serv.delay=int(random()*SERV_DELAY_MAX)
-        serv.delay=17
-        slp = 2 + random()
-        
-        print "Test #{}: servo.delay={}".format(n,serv.delay)
-
-        serv.b_up()
-        print "   Sleep for {:.0f}ms".format(slp*1000)        
+        # a
+        slp = 2+random()*0.255     
+        print "Attached for {:.4f}s".format(slp)       
+        serv.a_up()
+        sleep(2)
+        serv.a_dn()
+        test_bat1()       
         sleep(slp)
-        serv.b_dn()
-        test_kbd()
+        serv.a_up()
+        while bat1_presence():
+            pass
+        sleep(2)
+        serv.a_dn()
         test_bat1()
-        slp = random()*DN_SLEEP_MAX
-        print "   Sleep for {:.0f}ms".format(slp*1000)
-        sleep(slp) 
-        batinfo()
+        # b
+        slp = 2+random()*0.255     
+        print "Attached for {:.4f}s".format(slp)       
+        serv.b_up()
+        sleep(2)
+        serv.b_dn()
+        test_bat1()       
+        sleep(slp)
+        serv.b_up()
+        while bat1_presence():
+            pass       
+        sleep(2)
+        serv.b_dn()
+        test_bat1()
+        # ab
+        slp = 2+random()*0.255     
+        print "Attached for {:.4f}s".format(slp)       
+        serv.up()
+        sleep(2)
+        serv.dn()
+        test_bat1()       
+        sleep(slp)
+        serv.up()
+        while bat1_presence():
+            pass       
+        sleep(2)
+        serv.dn()
+        test_bat1()
 
-serv = Servo(110,96,70,88,delay=5)
+serv = Servo(115,96,70,88,delay=5)
 serv.a_dn()
 serv.b_dn()
 
