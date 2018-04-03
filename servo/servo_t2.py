@@ -178,10 +178,12 @@ def run_testscript2():
             
 def run_testscript3():
     serv.delay=17
+    n=0
     while True:
         # a
+        n=n+1
         slp = 2+random()*0.255     
-        print "Attached for {:.4f}s".format(slp)       
+        print "Test {}: Attached for {:.4f}s".format(n,slp)       
         serv.a_up()
         sleep(2)
         serv.a_dn()
@@ -194,8 +196,9 @@ def run_testscript3():
         serv.a_dn()
         test_bat1()
         # b
+        n=n+1
         slp = 2+random()*0.255     
-        print "Attached for {:.4f}s".format(slp)       
+        print "Test {}: Attached for {:.4f}s".format(n,slp)     
         serv.b_up()
         sleep(2)
         serv.b_dn()
@@ -208,8 +211,9 @@ def run_testscript3():
         serv.b_dn()
         test_bat1()
         # ab
+        n=n+1
         slp = 2+random()*0.255     
-        print "Attached for {:.4f}s".format(slp)       
+        print "Test {}: Attached for {:.4f}s".format(n,slp)      
         serv.up()
         sleep(2)
         serv.dn()
@@ -295,6 +299,22 @@ while True:
             elif c=='-':
                 d=d-1
                 print "  d={}".format(d)
+            elif c=='8':
+                print "A_UP=",serv.A_UP
+                serv.A_UP=serv.A_UP-1
+                serv.a_up()
+            elif c=='/':
+                print "A_UP=",serv.A_UP
+                serv.A_UP=serv.A_UP+1
+                serv.a_up()
+            elif c=='9':
+                print "B_UP=",serv.B_UP
+                serv.B_UP=serv.B_UP-1
+                serv.b_up()
+            elif c=='*':
+                print "B_UP=",serv.B_UP
+                serv.B_UP=serv.B_UP+1
+                serv.b_up()                
                 
             elif c=='q':
                 
