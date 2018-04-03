@@ -22,6 +22,7 @@ def contraint_info(f, n):
     
 def powercap_info(f):
     print '{}/'.format(f)
+    print '  enabled: {}'.format(sysvar('{}/enabled'.format(f)))    
     print '  name: {}'.format(sysvar(f+'/name'))
     contraint_info(f,0)
     contraint_info(f,1)
