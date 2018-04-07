@@ -1,0 +1,13 @@
+#!/usr/local/conda2/bin/python
+# -*- coding: utf-8 -*-
+from os import listdir
+
+path='/sys/class/thermal'
+prex='thermal_zone'
+files = [f for f in listdir(path) if f[:len(prex)]==prex]
+for f in files:
+   fd = open('{}/{}/type'.format(path,f), 'r')
+   type = fd.read().rstrip()
+   fd = open('{}/{}/temp'.format(path,f), 'r')
+   temp = fd.read().rstrip()
+   print "{:>16}: {:.3f}".format(type,float(temp)/1e3)
