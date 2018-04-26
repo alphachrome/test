@@ -1,0 +1,34 @@
+#! /usr/local/conda2/bin/python
+import time
+
+def sysvar(filename, t='int'):
+    try:
+        with open(filename, 'r') as fd:
+            val = fd.readline().rstrip()
+        return int(val) if val.isdigit() else val
+    except:
+        return '---'
+
+def contraint_info(f, n):
+    print '    constraint_{}:'.format(n)
+    print '      name: {}'.format(
+        sysvar('{}/constraint_{}_name'.format(f,n)))
+    print '      max_power_uw: {}'.format(
+        sysvar('{}/constraint_{}_max_power_uw'.format(f,n)))
+    print '      power_limit_uw: {}'.format(
+        sysvar('{}/constraint_{}_power_limit_uw'.format(f,n)))
+    print '      time_window_us: {}'.format(
+        sysvar('{}/constraint_{}_time_window_us'.format(f,n)))
+    
+def powercap_info(f):
+    print '{}/'.format(f)
+    print '  enabled: {}'.format(sysvar('{}/enabled'.format(f)))    
+    print '  name: {}'.format(sysvar(f+'/name'))
+    contraint_info(f,0)
+    contraint_info(f,1)
+        
+powercap_info('/sys/class/powercap/intel-rapl:0')
+#powercap_info('/sys/class/powercap/intel-rapl:0:0')
+#powercap_info('/sys/class/powercap/intel-rapl:0:1')
+#powercap_info('/sys/class/powercap/intel-rapl:0:2')
+powercap_info('/sys/class/powercap/intel-rapl:1')
